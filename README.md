@@ -79,6 +79,7 @@ Todos los link dados en las instrucciones de la prueba se cumplen:
 - Recalcar que el json de libro necesita la nacionalidad del autor, ya que en caso de que este no este registrado,
 debe registrar primero el autor y luego el libro, si el autor esta registrado (coincidir tanto autor como nacionalidad),
 entonces simplemente registra el libro. Cualquier error, se mostrara un mensaje en pantalla explicando que sucedio.
+- Además, se incluye el modelo entidad relación dentro de la carpeta MER.
 
 <pre>
 
