@@ -16,14 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url
-from rest_framework.routers import DefaultRouter
 from api.views import gestionAutor, gestionLibro
 
-"""router = DefaultRouter()
-router.register(r'api/autor',AutorViewSet)
-router.register(r'api/libro',LibroViewSet)
-
-urlpatterns = router.urls"""
 
 urlpatterns = [
     path('admin/', admin.site.urls),

@@ -7,32 +7,21 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Create your views here.
-"""class AutorViewSet(viewsets.ModelViewSet):
-    queryset = Autor.objects.all()
-    serializer_class = AutorSerializer"""
-    
-
-
-"""class LibroViewSet(viewsets.ModelViewSet):
-    queryset = Libro.objects.all()
-    serializer_class = LibroSerializer"""
-    
-
 @api_view(['GET', 'POST'])
 def gestionAutor(request,id=None):
     if request.method == 'GET':
-        autor = Autor.objects.filter(autor=nombre)
+        autor = Autor.objects.filter(id=id)
         if autor: # Si el autor existe
-            Au=Autor.objects.get(autor=nombre)
+            Au=Autor.objects.get(id=id)
             serializerAu = AutorSerializer(Au)
             return Response(serializerAu.data)
         else:
-            if nombre is None:
+            if id is None:
                 autor = Autor.objects.all()
                 serializer = AutorSerializer(autor, many=True)
                 return Response(serializer.data)
             else:
-                mensaje="Este Autor no esta registrado en la base de datos"
+                mensaje="Este Autor no esta registrado en la base de datos."
                 return Response({"Mensaje": mensaje},status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'POST':
@@ -40,13 +29,17 @@ def gestionAutor(request,id=None):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        mensaje="Este autor ya esta registrado, o introdujo valores en los campos no adecuados."
+        return Response({"Mensaje": mensaje},status=status.HTTP_400_BAD_REQUEST)   
+        #return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 def gestionLibro(request):
     autor = Autor.objects.filter(autor=request.data['autor'],nacionalidad=request.data['nacionalidad'])
     if autor: # Si el autor existe, asocio el libro con el autor
-        serializer=LibroSerializer(data=request.data)
+        Au=Autor.objects.get(autor=request.data['autor'],nacionalidad=request.data['nacionalidad'])
+        librodict={'libro':request.data['libro'],'editorial':request.data['editorial'],'idAutor':Au.id,'autor':request.data['autor'],'nacionalidad':request.data['nacionalidad']}
+        serializer=LibroSerializer(data=librodict)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -61,6 +54,6 @@ def gestionLibro(request):
                 serializerLi.save()
                 return Response(serializerLi.data, status=status.HTTP_201_CREATED)
             else:
-               return Response(serializerLi.errors, status=status.HTTP_400_BAD_REQUEST)  
+                return Response(serializerLi.errors, status=status.HTTP_400_BAD_REQUEST)  
         else:
             return Response(serializerAu.errors, status=status.HTTP_400_BAD_REQUEST) 
