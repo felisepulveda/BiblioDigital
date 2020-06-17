@@ -93,13 +93,6 @@ DATABASES = {
 # Django-nose Measuring coverage
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
-NOSE_ARGS = [
-    '--with-coverage',
-    '--cover-html',
-    '--cover-html-dir=htmlcov',
-    '--cover-package=api',
-]
-
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
