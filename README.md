@@ -5,13 +5,8 @@ Paquetes necesarios
 
 - virtualenv 16.1.0
 - virtualenvwrapper-win 1.2.5
-- gevent 20.5.0 
-- psycopg2 2.8.5 
-- redis 3.5.2 
-- Django 3.0.6 
-- django-slack-app 1.0.40 
-- django-celery-beat 2.0.0 
-- django-celery-results 1.2.1 
+- psycopg2 2.8.5  
+- Django 3.0.7  
 - djangorestframework 3.11.0 
 - coverage 5.1 
 - django-nose 1.4.6 
@@ -21,13 +16,13 @@ Ahora, instalamos Python 3.6.2, abrimos una terminal, e instalamos los siguiente
 - pip install virtualenvwrapper-win==1.2.5
 
 Luego en la misma terminal, escribimos lo siguiente
-- 'mkvirtualenv Nora'  (Acá creas el ambiente virtual llamado 'Nora', e ingresas a él automáticamente)
+- 'mkvirtualenv BiblioDigital'  (Acá creas el ambiente virtual llamado 'BiblioDigital', e ingresas a él automáticamente)
 
-Crea una carpeta con el mismo nombre del ambiente, es decir, 'Nora', e ingresa a ella en tu terminal y escribe lo siguiente
-- 'setprojectdir .' (ahora cada vez que ingresemos a nuestro ambiente, nos dirigira a la carpeta 'Nora')
-- 'workon Nora' (para ingresar al ambiente, 'deactivate' es para salir)
+Crea una carpeta con el mismo nombre del ambiente, es decir, 'BiblioDigital', e ingresa a ella en tu terminal y escribe lo siguiente
+- 'setprojectdir .' (ahora cada vez que ingresemos a nuestro ambiente, nos dirigira a la carpeta 'BiblioDigital')
+- 'workon BiblioDigital' (para ingresar al ambiente, 'deactivate' es para salir)
 
-Clonamos mi repositorio dentro de 'Nora', y nos situamos al mismo nivel del archivo manage.py dentro de nuestra cmd.
+Clonamos mi repositorio dentro de 'BiblioDigital', y nos situamos al mismo nivel del archivo manage.py dentro de nuestra cmd.
 
 Ahora instalamos paquetes de python con el comando
 - pip install -r requerimientos.txt 
@@ -41,6 +36,9 @@ Usamos postgresql como nuestro sistema de base de datos, por tanto, debe
     'default': {     
         'ENGINE': 'django.db.backends.postgresql_psycopg2',    
         'NAME': 'el nombre que quiera', # Nombre de la base de datos    
+	'TEST': {
+            'NAME': 'coverage_test_bibliodigital',   # Nombre de la base de datos para nuestros testeos
+        },
         'USER': 'postgres',	# Aca      
         'PASSWORD': 'root',     # Aca        
         'HOST': 'localhost',	# Dependiendo en que servidor se almacena su sistema de gestion de base de datos     
@@ -49,68 +47,56 @@ Usamos postgresql como nuestro sistema de base de datos, por tanto, debe
 }         
 </pre>
 ## Ejecución Proyecto
-Para ejecutar nuestro proyecto Almuerzos, escribimos los siguientes comandos en nuestro ambiente 'Nora' (al mismo nivel archivo manage.py)
+Para ejecutar nuestro proyecto BiblioDigital, escribimos los siguientes comandos en nuestro ambiente 'BiblioDigital' (al mismo nivel archivo manage.py)
 - python manage.py makemigrations
 - python manage.py migrate
-- python manage.py createsuperuser (Creamos a nora con todos los permisos, aunque se puede cambiar en caso de asi desearlo)
-[username: nora, email: 'xxx@gmail.com', password: nora1234567] 
+- python manage.py createsuperuser (Creamos a Apiux con todos los permisos, aunque se puede cambiar en caso de asi desearlo)
+[username: Apiux, email: 'xxx@gmail.com', password: bibliotecadigital] 
 
-Luego, descargamos e instalamos ngrok, y ejecutamos ngrok.exe, se abrirá una terminal y escribimos 
-- ngrok http 80 (servidor tunel)
+Luego, en nuestro ambiente virtual 'BiblioDigita' escribimos
+- python manage.py runserver
 
-Luego, en el archivo settings.py copiamos la url generada por ngrok 'https://xxxxxxxx.ngrok.io' en
-<pre>
-- ALLOWED_HOSTS =[],
-- MENU_URL = 'https://xxxxxxxx.ngrok.io/menu/{}',
-</pre>
-
-Luego, en nuestro ambiente virtual 'Nora' escribimos
-- python manage.py runserver 0.0.0.0:80  (servidor django, '0.0.0.0:80' correra a traves de ngrok)
-
-#### Pueden solo correr 'python manage.py runserver', ya que asumo tienen la URL 'https://nora.cornershop.io' para probar el programa,
-en este caso, al final del archivo settings.py de nuestro proyecto Almuerzos deben
-<pre>
-- #MENU_URL = 'https://nora.cornershop.io/menu/{}'	DESCOMENTAR
-- MENU_URL = 'https://xxxxxxxx.ngrok.io/menu/{}'	COMENTAR
-</pre>
-
-Luego descargamos redis para windows, y abrimos redis-server.exe, se nos abrirá una terminal, y escribimos
-- redis-server (servidor redis)
-
-Luego abrimos dos terminales mas (en ambiente 'Nora', al nivel de manage.py), y escribimos
-
-Terminal 1
-- celery worker -A Almuerzos.celery --loglevel=info -P gevent (comando de celery para workers)
-
-Terminal2
-- celery -A Almuerzos.celery beat --loglevel=INFO --pidfile= 
-(comando de celery beat para crontabs,--pidfile= es para que no crees tu archivo pidfile, si no lo escribes, en la proxima ejecucion debes referenciar ese archivo)
-
-## Credenciales Slack
-Crear una app en slack, y con los siguientes scopes para 'user'
-- channels:read
-- reminders:write
-- users:read
-
-En el archivo Almuerzos/Almuerzos/settings.py copia lo siguiente
-<pre>
-- SLACK_USER_TOKEN = 'xoxp-xxxxxxxxxxxxxx-xxxxxxxxxxxxxx-xxxxxxxxdxxxxxxxxxxxxxxx'
-- ID_CHANNEL = 'CXXXXXXXXXX' (Tu canal puede llamarse como quieras, pero en él deben estar todos los empleados al que quieres entregar almuerzos)
-</pre>
-
-## Credenciales para Nora
-- Username: nora
-- Password: nora1234567
+## Credenciales para BiblioDigital (django/admin)
+- Username: Apiux
+- Password: bibliotecadigital
 
 ## Pruebas 
-Para generar un reporte, escribir
+Para generar un reporte, escribir (viene integrado django-nose y coverage):
 
-- python manage.py test   (viene integrado django-nose y coverage)
+- coverage run --branch --source=api ./manage.py test (ejecuta las pruebas unitarias)
+- coverage report (muestra el reporte por consola)
+- coverage html -d coverage-report (crea 'coverage-report' dentro del proyecto, y podemos acceder a 'index.html' para ver con detalle las pruebas)
+
 
 ## Explicación
-Nuestro programa borra la base datos diariamiente (tabla empleados y tabla pedidos) a las 6:15 AM, ya que simulamos una base de datos en cache,
-y los uuid son generados on the fly. Los slack reminders se envian a las 7:15 AM. Todo esto se hace gracias a celery y redis de forma asincrona.
-No se pueden hacer pedidos despues de las 11 AM. El comportamiento del borrado de la base de datos se puede impedir simplemente eliminando borrar_db en el 
-'CELERYBEAT_SCHEDULE' de celery.py. Se usan sistemas de autentificacion, se bloquean URLs intermedias, excepto las relacionadas con la selección de almuerzos 
-de los empleados. El codigo impide ciertas inconsistencias como ingresar menus con campos en blancos, que el empleado pida mas de un menu al dia, que no pueda pedir menus
-si es que a Nora se le olvido agregar un menu diario, y borro sus menus registrados, etc. 
+Todos los link dados en las instrucciones de la prueba se cumplen:
+
+- http://127.0.0.1:8000/api/autor/  -> muestra todos los autores con sus libros, además del textbox para incluir peticion post 
+- http://127.0.0.1:8000/api/autor/1 -> muestra el autor con el id 1, con todos sus libros, además del textbox para incluir peticion post 
+- http://127.0.0.1:8000/api/libro/ -> muestra el textbox para incluir peticion post, método get esta desactivado 
+- Abajo se muestra la estructura de los json tanto para autor como libro.
+- Puede ingresar a django/admin para ingresar datos mas facilmente con las credenciales dadas más arriba.
+- Recalcar que el json de libro necesita la nacionalidad del autor, ya que en caso de que este no este registrado,
+debe registrar primero el autor y luego el libro, si el autor esta registrado (coincidir tanto autor como nacionalidad),
+entonces simplemente registra el libro. Cualquier error, se mostrara un mensaje en pantalla explicando que sucedio.
+
+<pre>
+
+- Json Autor
+{
+"autor": "tolkien",
+"nacionalidad": "chileno"
+}
+
+- Json Libro
+{
+"libro": "el señor de las casas",
+"editorial": "la comarca",
+"autor": "tolkien",
+"nacionalidad": "chileno"
+}
+
+</pre>
+
+Autocritica
+- Podria haber testeado mas, pero dado las restricciones de tiempo, solo alcance a testear los modelos, y no las vistas.
